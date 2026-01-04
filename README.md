@@ -2,7 +2,6 @@
 
 A Flask-based web application for searching and downloading character cards from the Character Archive. Features a modern Tailwind CSS interface with full-text search, character previews, and card downloads.
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.11-blue.svg)
 ![Flask](https://img.shields.io/badge/flask-3.1-green.svg)
 
@@ -290,9 +289,6 @@ See `requirements.txt` for complete list.
 - [File Structure](docs/FILE_STRUCTURE.md) - Image storage and file organization
 - [Migration Guide](docs/MIGRATION.md) - Server migration instructions
 
-## License
-
-MIT License - see LICENSE file for details
 
 ## Credits
 
@@ -300,8 +296,3 @@ Part of the Character Archive preservation project. Original server and scraper 
 - [char-archive-server](https://git.evulid.cc/cyberes/char-archive-server)
 - [char-archive-scraper](https://git.evulid.cc/cyberes/char-archive-scraper)
 
-## Contributing
-
-This is an archive preservation project that shut down in January 2026. The code is provided as-is for historical reference and self-hosting purposes.
-
-For issues or questions, please open an issue on GitHub.
