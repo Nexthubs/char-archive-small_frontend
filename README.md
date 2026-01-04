@@ -108,7 +108,7 @@ Open your browser and navigate to:
 1. Clone the repository:
 ```bash
 git clone https://github.com/sproutingnerd/char-archive-small_frontend.git
-cd char-archive-small_frontend
+cd char-archive-small_frontend/small_front
 ```
 
 2. Install dependencies:
@@ -254,13 +254,23 @@ Images are stored in `archive/hashed-data/` using MD5 hash sharding:
 ## Project Structure
 
 ```
-small_front/
-├── app.py              # Flask API backend
-├── templates/
-│   └── index.html      # Tailwind CSS frontend
-├── requirements.txt    # Python dependencies
-├── Dockerfile          # Container configuration
-└── README.md           # This file
+char-archive-small_frontend/
+├── README.md                      # This file
+├── docker-compose.yml             # Production Docker Compose config
+├── docker-compose.import.yml      # Docker Compose with DB import
+├── init-db.sh                     # Database initialization script
+├── docs/                          # Documentation
+│   ├── MIGRATION.md               # Server migration guide
+│   ├── setup-guide.md             # Complete Docker setup
+│   ├── frontend-guide.md          # API and architecture details
+│   ├── DATABASE_STRUCTURE.md      # Full database schema
+│   └── FILE_STRUCTURE.md          # Image storage layout
+└── small_front/                   # Frontend application
+    ├── app.py                     # Flask API backend
+    ├── templates/
+    │   └── index.html             # Tailwind CSS frontend
+    ├── requirements.txt           # Python dependencies
+    └── Dockerfile                 # Container configuration
 ```
 
 ## Dependencies
@@ -274,9 +284,11 @@ See `requirements.txt` for complete list.
 
 ## Related Documentation
 
-- [Full Setup Guide](https://github.com/sproutingnerd/char-archive-small_frontend/blob/master/../docs/setup-guide.md) - Complete Docker setup
-- [Frontend Architecture](https://github.com/sproutingnerd/char-archive-small_frontend/blob/master/../docs/frontend-guide.md) - Detailed API and schema docs
-- [Database Structure](https://github.com/sproutingnerd/char-archive-small_frontend/blob/master/../DATABASE_STRUCTURE.md) - Full schema reference
+- [Full Setup Guide](docs/setup-guide.md) - Complete Docker setup instructions
+- [Frontend Architecture](docs/frontend-guide.md) - Detailed API and schema documentation
+- [Database Structure](docs/DATABASE_STRUCTURE.md) - Complete database schema reference
+- [File Structure](docs/FILE_STRUCTURE.md) - Image storage and file organization
+- [Migration Guide](docs/MIGRATION.md) - Server migration instructions
 
 ## License
 
