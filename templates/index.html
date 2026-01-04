@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Archive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            bg: '#0a0a0c',
+                            card: '#141418',
+                            hover: '#1e1e24',
+                            border: '#2a2a32',
+                            surface: '#18181c'
+                        },
+                        purple: {
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95'
+                        }
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(139, 92, 246, 0.15)',
+                        'glow-lg': '0 0 40px rgba(139, 92, 246, 0.2)',
+                        'card': '0 4px 20px rgba(0, 0, 0, 0.4)',
+                        'card-hover': '0 8px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(139, 92, 246, 0.1)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Base styles */
+        body {
+            background: linear-gradient(135deg, #0a0a0c 0%, #0d0d12 50%, #0a0a0c 100%);
+        }
+
+        /* Card image aspect ratio */
+        .card-image {
+            aspect-ratio: 3/4;
+            object-fit: cover;
+        }
+
+        /* Loading skeleton animation */
+        .skeleton {
+            background: linear-gradient(90deg, #141418 25%, #1e1e24 50%, #141418 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Card entrance animation */
+        .fade-in {
+            animation: fadeIn 0.4s ease-out both;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Stagger animation for cards */
+        .fade-in:nth-child(1) { animation-delay: 0.02s; }
+        .fade-in:nth-child(2) { animation-delay: 0.04s; }
+        .fade-in:nth-child(3) { animation-delay: 0.06s; }
+        .fade-in:nth-child(4) { animation-delay: 0.08s; }
+        .fade-in:nth-child(5) { animation-delay: 0.10s; }
+        .fade-in:nth-child(6) { animation-delay: 0.12s; }
+        .fade-in:nth-child(7) { animation-delay: 0.14s; }
+        .fade-in:nth-child(8) { animation-delay: 0.16s; }
+        .fade-in:nth-child(9) { animation-delay: 0.18s; }
+        .fade-in:nth-child(10) { animation-delay: 0.20s; }
+        .fade-in:nth-child(11) { animation-delay: 0.22s; }
+        .fade-in:nth-child(12) { animation-delay: 0.24s; }
+        .fade-in:nth-child(n+13) { animation-delay: 0.26s; }
+
+        /* Text clamping */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Modal animation */
+        .modal-enter {
+            animation: modalEnter 0.3s ease-out forwards;
+        }
+        @keyframes modalEnter {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* Overlay animation */
+        .overlay-enter {
+            animation: overlayEnter 0.3s ease-out forwards;
+        }
+        @keyframes overlayEnter {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 50%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Glowing border effect */
+        .glow-border {
+            position: relative;
+        }
+        .glow-border::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(124, 58, 237, 0.1), rgba(139, 92, 246, 0.4));
+            border-radius: inherit;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .glow-border:hover::before {
+            opacity: 1;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0c;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2a32;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3a3a44;
+        }
+
+        /* Modal scrollbar */
+        .modal-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-scroll::-webkit-scrollbar-track {
+            background: #141418;
+            border-radius: 3px;
+        }
+        .modal-scroll::-webkit-scrollbar-thumb {
+            background: #2a2a32;
+            border-radius: 3px;
+        }
+
+        /* Search input glow effect */
+        .search-glow:focus {
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15), 0 0 20px rgba(139, 92, 246, 0.1);
+        }
+
+        /* Button hover effect */
+        .btn-primary {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+            transform: translateY(-1px);
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Card hover lift effect */
+        .card-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-lift:hover {
+            transform: translateY(-4px);
+        }
+
+        /* Image overlay gradient */
+        .image-overlay {
+            background: linear-gradient(to top, rgba(10, 10, 12, 0.9) 0%, rgba(10, 10, 12, 0) 50%);
+        }
+
+        /* Pulse animation for stats */
+        .pulse-subtle {
+            animation: pulseSub 3s ease-in-out infinite;
+        }
+        @keyframes pulseSub {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="h-full text-gray-100">
+    <div class="min-h-full">
+        <!-- Header with gradient border -->
+        <header class="bg-dark-card/80 backdrop-blur-md border-b border-dark-border/50 sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">
+                        <span class="gradient-text">Character</span>
+                        <span class="text-white"> Archive</span>
+                    </h1>
+                    <div id="stats" class="text-sm text-purple-300/70 font-medium pulse-subtle"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Search Section with enhanced styling -->
+        <div class="bg-gradient-to-b from-dark-surface to-dark-bg border-b border-dark-border/30">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+                <!-- Search heading -->
+                <div class="text-center mb-6">
+                    <h2 class="text-lg sm:text-xl text-gray-300 font-medium">Find your perfect character</h2>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 max-w-4xl mx-auto">
+                    <div class="flex-1">
+                        <div class="relative group">
+                            <input
+                                type="text"
+                                id="searchInput"
+                                placeholder="Search characters by name or author..."
+                                class="w-full bg-dark-bg/80 border-2 border-dark-border rounded-xl px-5 py-4 pl-12 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/70 transition-all duration-300 search-glow"
+                            >
+                            <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-purple-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <select id="sourceFilter" class="bg-dark-bg/80 border-2 border-dark-border rounded-xl px-4 py-4 text-white focus:outline-none focus:border-purple-500/70 transition-all duration-300 cursor-pointer hover:border-dark-hover">
+                            <option value="all">All Sources</option>
+                            <option value="chub">Chub</option>
+                            <option value="generic">Generic</option>
+                            <option value="booru">Booru</option>
+                            <option value="webring">Webring</option>
+                            <option value="char_tavern">Character Tavern</option>
+                            <option value="risuai">RisuAI</option>
+                            <option value="nyaime">Nyaime</option>
+                        </select>
+                        <button
+                            id="searchBtn"
+                            class="btn-primary text-white px-8 py-4 rounded-xl font-semibold flex items-center gap-2 whitespace-nowrap"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                            Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+            <!-- Results Info -->
+            <div id="resultsInfo" class="mb-8 hidden">
+                <div class="flex items-center gap-3">
+                    <div class="h-px flex-1 bg-gradient-to-r from-transparent via-dark-border to-transparent"></div>
+                    <span id="resultCount" class="text-gray-400 text-sm font-medium px-4"></span>
+                    <div class="h-px flex-1 bg-gradient-to-r from-transparent via-dark-border to-transparent"></div>
+                </div>
+            </div>
+
+            <!-- Skeleton template (outside loading grid so it doesn't get cleared) -->
+            <template id="skeletonTemplate">
+                <div class="bg-dark-card rounded-2xl overflow-hidden shadow-card">
+                    <div class="skeleton card-image w-full"></div>
+                    <div class="p-4 space-y-3">
+                        <div class="skeleton h-5 rounded-lg w-3/4"></div>
+                        <div class="skeleton h-4 rounded-lg w-1/2"></div>
+                        <div class="skeleton h-3 rounded-lg w-full"></div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Loading State -->
+            <div id="loading" class="hidden">
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5 sm:gap-6">
+                </div>
+            </div>
+
+            <!-- Results Grid with improved spacing -->
+            <div id="results" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5 sm:gap-6">
+            </div>
+
+            <!-- No Results -->
+            <div id="noResults" class="hidden text-center py-20">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-dark-card border border-dark-border mb-6">
+                    <svg class="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-300 mb-2">No characters found</h3>
+                <p class="text-gray-500">Try a different search term or filter</p>
+            </div>
+
+            <!-- Welcome State with enhanced styling -->
+            <div id="welcome" class="text-center py-16 sm:py-24">
+                <div class="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-gradient-to-br from-purple-600/20 to-purple-900/20 border border-purple-500/20 mb-8 shadow-glow">
+                    <svg class="w-12 h-12 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                    </svg>
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Welcome to the <span class="gradient-text">Character Archive</span></h2>
+                <p class="text-gray-400 max-w-lg mx-auto text-lg leading-relaxed">
+                    Search through hundreds of thousands of AI character cards preserved from various platforms.
+                </p>
+                <div class="mt-8 flex flex-wrap justify-center gap-3">
+                    <span class="px-4 py-2 rounded-full bg-dark-card border border-dark-border text-sm text-gray-400">Chub</span>
+                    <span class="px-4 py-2 rounded-full bg-dark-card border border-dark-border text-sm text-gray-400">Character Tavern</span>
+                    <span class="px-4 py-2 rounded-full bg-dark-card border border-dark-border text-sm text-gray-400">RisuAI</span>
+                    <span class="px-4 py-2 rounded-full bg-dark-card border border-dark-border text-sm text-gray-400">and more</span>
+                </div>
+            </div>
+
+            <!-- Pagination with improved styling -->
+            <div id="pagination" class="hidden mt-12 flex justify-center items-center gap-3">
+                <button id="prevPage" class="bg-dark-card hover:bg-dark-hover border border-dark-border px-5 py-2.5 rounded-xl text-white font-medium disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 hover:border-purple-500/30 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                    Previous
+                </button>
+                <span id="pageInfo" class="px-6 py-2 text-gray-400 font-medium bg-dark-card/50 rounded-xl border border-dark-border/50"></span>
+                <button id="nextPage" class="bg-dark-card hover:bg-dark-hover border border-dark-border px-5 py-2.5 rounded-xl text-white font-medium disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 hover:border-purple-500/30 flex items-center gap-2">
+                    Next
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Character Modal with enhanced design -->
+    <div id="modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 py-8 text-center">
+            <div class="fixed inset-0 bg-black/80 backdrop-blur-sm overlay-enter" id="modalOverlay"></div>
+            <div class="relative bg-dark-card rounded-2xl overflow-hidden shadow-2xl transform sm:max-w-3xl sm:w-full border border-dark-border/50 modal-enter">
+                <!-- Close button -->
+                <div class="absolute top-4 right-4 z-10">
+                    <button id="closeModal" class="bg-dark-bg/90 hover:bg-dark-hover rounded-full p-2.5 text-gray-400 hover:text-white transition-all duration-300 border border-dark-border/50 hover:border-purple-500/30">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <div id="modalContent" class="p-6 sm:p-8">
+                    <!-- Content loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let currentPage = 1;
+        let currentQuery = '';
+        let currentSource = 'all';
+        let totalPages = 1;
+
+        // Elements
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const sourceFilter = document.getElementById('sourceFilter');
+        const results = document.getElementById('results');
+        const loading = document.getElementById('loading');
+        const noResults = document.getElementById('noResults');
+        const welcome = document.getElementById('welcome');
+        const resultsInfo = document.getElementById('resultsInfo');
+        const resultCount = document.getElementById('resultCount');
+        const pagination = document.getElementById('pagination');
+        const prevPage = document.getElementById('prevPage');
+        const nextPage = document.getElementById('nextPage');
+        const pageInfo = document.getElementById('pageInfo');
+        const modal = document.getElementById('modal');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const closeModal = document.getElementById('closeModal');
+        const modalContent = document.getElementById('modalContent');
+        const stats = document.getElementById('stats');
+
+        // Load stats
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const data = await response.json();
+                stats.textContent = `${data.total.toLocaleString()} characters archived`;
+            } catch (e) {
+                console.error('Failed to load stats:', e);
+            }
+        }
+
+        // Show loading skeleton
+        function showLoading() {
+            loading.classList.remove('hidden');
+            results.innerHTML = '';
+            noResults.classList.add('hidden');
+            welcome.classList.add('hidden');
+
+            const skeleton = document.getElementById('skeletonTemplate');
+            const loadingGrid = loading.querySelector('.grid');
+            loadingGrid.innerHTML = '';
+            for (let i = 0; i < 12; i++) {
+                loadingGrid.appendChild(skeleton.content.cloneNode(true));
+            }
+        }
+
+        // Search function
+        async function search(page = 1) {
+            const query = searchInput.value.trim();
+            if (!query) return;
+
+            currentQuery = query;
+            currentSource = sourceFilter.value;
+            currentPage = page;
+
+            showLoading();
+
+            try {
+                const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&source=${currentSource}&page=${page}&per_page=24`);
+                const data = await response.json();
+
+                loading.classList.add('hidden');
+
+                if (data.results.length === 0) {
+                    noResults.classList.remove('hidden');
+                    resultsInfo.classList.add('hidden');
+                    pagination.classList.add('hidden');
+                    return;
+                }
+
+                // Update results info
+                resultsInfo.classList.remove('hidden');
+                resultCount.textContent = `Found ${data.total.toLocaleString()} characters`;
+
+                // Render results with enhanced card design
+                results.innerHTML = data.results.map(char => `
+                    <div class="character-card bg-dark-card rounded-2xl overflow-hidden border border-dark-border/50 hover:border-purple-500/40 transition-all duration-300 cursor-pointer fade-in group card-lift shadow-card hover:shadow-card-hover"
+                         data-source="${escapeHtml(char.source)}"
+                         data-id="${escapeHtml(String(char.id))}">
+                        <div class="relative overflow-hidden">
+                            <img
+                                src="/image/${char.image_hash}"
+                                alt="${escapeHtml(char.name || 'Character')}"
+                                class="card-image w-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                                loading="lazy"
+                                onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%23141418%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2250%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23444%22 font-size=%2240%22>?</text></svg>'"
+                            >
+                            <!-- Gradient overlay -->
+                            <div class="absolute inset-0 image-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <!-- Source badge -->
+                            <div class="absolute top-2.5 right-2.5">
+                                <span class="bg-dark-bg/90 backdrop-blur-sm text-xs px-2.5 py-1 rounded-full text-gray-300 border border-dark-border/50 font-medium">${escapeHtml(char.source)}</span>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-semibold text-white truncate text-sm sm:text-base group-hover:text-purple-300 transition-colors duration-300">${escapeHtml(char.name || 'Unnamed')}</h3>
+                            <p class="text-sm text-gray-400 truncate mt-1">${escapeHtml(char.author || 'Unknown author')}</p>
+                            ${char.tagline ? `<p class="text-xs text-gray-400 mt-2 line-clamp-2 leading-relaxed">${escapeHtml(cleanCardText(char.tagline))}</p>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+
+                // Update pagination
+                totalPages = data.pages;
+                if (totalPages > 1) {
+                    pagination.classList.remove('hidden');
+                    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+                    prevPage.disabled = currentPage === 1;
+                    nextPage.disabled = currentPage === totalPages;
+                } else {
+                    pagination.classList.add('hidden');
+                }
+
+            } catch (e) {
+                console.error('Search failed:', e);
+                loading.classList.add('hidden');
+                noResults.classList.remove('hidden');
+            }
+        }
+
+        // Show character details with enhanced modal
+        async function showCharacter(source, id) {
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            modalContent.innerHTML = '<div class="flex justify-center py-16"><div class="skeleton w-16 h-16 rounded-full"></div></div>';
+
+            try {
+                const response = await fetch(`/api/character/${source}/${encodeURIComponent(id)}`);
+                const char = await response.json();
+
+                if (char.error) {
+                    modalContent.innerHTML = `<div class="py-12 text-center"><p class="text-red-400">${char.error}</p></div>`;
+                    return;
+                }
+
+                const definition = char.definition || {};
+                const defData = definition.data || definition || {};
+                const description = defData.description || defData.char_persona || definition.description || '';
+                const firstMessage = defData.first_mes || '';
+                const tags = defData.tags || [];
+
+                modalContent.innerHTML = `
+                    <div class="flex flex-col sm:flex-row gap-6 sm:gap-8">
+                        <!-- Image section -->
+                        <div class="sm:w-2/5 flex-shrink-0">
+                            <div class="relative rounded-xl overflow-hidden shadow-lg">
+                                <img
+                                    src="/image/${char.image_hash}"
+                                    alt="${escapeHtml(char.name || 'Character')}"
+                                    class="w-full rounded-xl"
+                                    onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%23141418%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2250%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23444%22 font-size=%2240%22>?</text></svg>'"
+                                >
+                            </div>
+
+                            <!-- Action buttons under image -->
+                            <div class="flex flex-col gap-2 mt-4">
+                                <div class="flex gap-2">
+                                    <a
+                                        href="/api/card/${source}/${encodeURIComponent(id)}"
+                                        class="flex-1 btn-primary text-white px-3 py-2.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 text-sm"
+                                        download
+                                        title="Download original card file (PNG with embedded data)"
+                                    >
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                        PNG Card
+                                    </a>
+                                    <a
+                                        href="/api/card/${source}/${encodeURIComponent(id)}/json"
+                                        class="flex-1 bg-dark-bg hover:bg-dark-hover border border-dark-border text-white px-3 py-2.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 hover:border-purple-500/30 text-sm"
+                                        download
+                                        title="Download character definition as JSON"
+                                    >
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                        </svg>
+                                        JSON
+                                    </a>
+                                </div>
+                                <a
+                                    href="/image/${char.image_hash}"
+                                    class="bg-dark-bg hover:bg-dark-hover border border-dark-border text-white px-3 py-2.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 hover:border-purple-500/30 text-sm"
+                                    target="_blank"
+                                    title="View full-size image"
+                                >
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                    </svg>
+                                    View Image
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Content section -->
+                        <div class="sm:w-3/5 text-left">
+                            <!-- Header -->
+                            <div class="mb-5">
+                                <h2 class="text-2xl sm:text-3xl font-bold text-white mb-2">${escapeHtml(char.name || 'Unnamed Character')}</h2>
+                                <p class="text-gray-400 text-base">by <span class="text-purple-400 font-medium">${escapeHtml(char.author || 'Unknown')}</span></p>
+                            </div>
+
+                            <!-- Meta badges -->
+                            <div class="flex flex-wrap gap-2 mb-5">
+                                <span class="bg-purple-500/15 text-purple-300 text-xs px-3 py-1.5 rounded-full font-medium border border-purple-500/20">${source}</span>
+                                ${char.added ? `<span class="bg-dark-bg text-gray-400 text-xs px-3 py-1.5 rounded-full font-medium border border-dark-border">${new Date(char.added).toLocaleDateString()}</span>` : ''}
+                            </div>
+
+                            <!-- Tags -->
+                            ${tags.length > 0 ? `
+                                <div class="mb-5">
+                                    <div class="flex flex-wrap gap-1.5">
+                                        ${tags.slice(0, 10).map(tag => `<span class="bg-dark-bg text-xs px-2.5 py-1 rounded-full text-gray-400 border border-dark-border/50 hover:border-purple-500/30 transition-colors">${escapeHtml(tag.trim())}</span>`).join('')}
+                                        ${tags.length > 10 ? `<span class="text-xs text-gray-500 px-2 py-1">+${tags.length - 10} more</span>` : ''}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            <!-- Description -->
+                            ${description ? `
+                                <div class="mb-5">
+                                    <h3 class="text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/>
+                                        </svg>
+                                        Description
+                                    </h3>
+                                    <div class="bg-dark-bg/50 rounded-xl p-4 border border-dark-border/30">
+                                        <p class="text-gray-300 text-sm max-h-40 overflow-y-auto whitespace-pre-wrap leading-relaxed modal-scroll">${escapeHtml(cleanCardText(description).substring(0, 1000))}${description.length > 1000 ? '...' : ''}</p>
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            <!-- First Message -->
+                            ${firstMessage ? `
+                                <div class="mb-5">
+                                    <h3 class="text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                        </svg>
+                                        First Message
+                                    </h3>
+                                    <div class="bg-gradient-to-br from-purple-900/10 to-dark-bg/50 rounded-xl p-4 border border-purple-500/10">
+                                        <p class="text-gray-300 text-sm max-h-32 overflow-y-auto whitespace-pre-wrap leading-relaxed modal-scroll">${escapeHtml(firstMessage.substring(0, 500))}${firstMessage.length > 500 ? '...' : ''}</p>
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+
+            } catch (e) {
+                console.error('Failed to load character:', e);
+                modalContent.innerHTML = '<div class="py-12 text-center"><p class="text-red-400">Failed to load character details</p></div>';
+            }
+        }
+
+        // Close modal helper
+        function closeModalHandler() {
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Clean up character card formatting from text
+        function cleanCardText(text) {
+            if (!text) return '';
+            return text
+                // Remove [Character("Name") patterns
+                .replace(/\[Character\s*\([^)]*\)\s*/gi, '')
+                // Remove [character("Name") patterns
+                .replace(/\[character\s*\([^)]*\)\s*/gi, '')
+                // Remove JSON-like key("value") patterns
+                .replace(/\w+\s*\(\s*"[^"]*"\s*\)/g, '')
+                // Remove opening brackets and braces at start
+                .replace(/^[\[\{]+\s*/g, '')
+                // Remove closing brackets and braces
+                .replace(/[\]\}]+/g, ' ')
+                // Remove standalone + signs
+                .replace(/\s*\+\s*/g, ', ')
+                // Clean up semicolons
+                .replace(/\s*;\s*/g, '. ')
+                // Remove {{user}} and {{char}} placeholders
+                .replace(/\{\{(user|char)\}\}/gi, '')
+                // Clean up multiple spaces
+                .replace(/\s+/g, ' ')
+                // Clean up multiple periods/commas
+                .replace(/[.,]{2,}/g, '.')
+                .trim();
+        }
+
+        // Event listeners
+        searchBtn.addEventListener('click', () => search(1));
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') search(1);
+        });
+        sourceFilter.addEventListener('change', () => {
+            if (currentQuery) search(1);
+        });
+        prevPage.addEventListener('click', () => search(currentPage - 1));
+        nextPage.addEventListener('click', () => search(currentPage + 1));
+        closeModal.addEventListener('click', closeModalHandler);
+        modalOverlay.addEventListener('click', closeModalHandler);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModalHandler();
+        });
+
+        // Event delegation for character cards (handles special characters in IDs)
+        results.addEventListener('click', (e) => {
+            const card = e.target.closest('.character-card');
+            if (card) {
+                const source = card.dataset.source;
+                const id = card.dataset.id;
+                if (source && id) {
+                    showCharacter(source, id);
+                }
+            }
+        });
+
+        // Initialize
+        loadStats();
+        searchInput.focus();
+    </script>
+</body>
+</html>
