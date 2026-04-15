@@ -45,7 +45,7 @@ services:
     restart: unless-stopped
     environment:
       DB_HOST: postgres
-      DB_PORT: "5433"
+      DB_PORT: "5432"
       DB_NAME: char_archive
       DB_USER: char_archive
       DB_PASSWORD: CharArch1ve_Db_2026!
