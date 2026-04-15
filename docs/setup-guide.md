@@ -144,10 +144,7 @@ If you prefer to import manually:
 docker compose up -d postgres
 
 # Run pg_restore
-docker compose exec -T postgres pg_restore \
-  -U char_archive \
-  -d char_archive \
-  -v /path/to/database.dump
+docker compose exec -T postgres sh -c 'pg_restore -U char_archive -d char_archive -v' < database.dump
 ```
 
 ### About the Original Dump
